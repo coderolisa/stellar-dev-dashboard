@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Builder - Test Suite</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-suite {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #ccc;
+        }
+        .test-case.pass {
+            border-left-color: #28a745;
+            background: #f0fff4;
+        }
+        .test-case.fail {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+        .summary {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .summary.pass {
+            background: #28a745;
+            color: white;
+        }
+        .summary.fail {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transaction Builder - Automated Test Suite</h1>
+    <div id="testResults"></div>
+
+    <script src="TransactionHistory.js"></script>
+    <script src="DraftManager.js"></script>
+    <script src="TransactionBuilder.js"></script>
+    <script src="test.js"></script>
+</body>
+</html>

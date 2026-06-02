@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Builder - Undo/Redo & Drafts</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Transaction Builder</h1>
+            <p class="subtitle">Build transactions with full undo/redo support and draft management</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Transaction Form -->
+            <div class="card">
+                <h2>Transaction Details</h2>
+                
+                <div class="form-group">
+                    <label for="type">Transaction Type</label>
+                    <select id="type">
+                        <option value="">Select Type</option>
+                        <option value="transfer">Transfer</option>
+                        <option value="payment">Payment</option>
+                        <option value="withdrawal">Withdrawal</option>
+                        <option value="deposit">Deposit</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="number" id="amount" min="0" step="0.01" placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select id="currency">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="from">From</label>
+                    <input type="text" id="from" placeholder="Sender account or ID">
+                </div>
+
+                <div class="form-group">
+                    <label for="to">To</label>
+                    <input type="text" id="to" placeholder="Recipient account or ID">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="3" placeholder="Transaction description"></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="button-group">
+                    <button id="undoBtn" class="btn btn-secondary" disabled>
+                        ↶ Undo
+                    </button>
+                    <button id="redoBtn" class="btn btn-secondary" disabled>
+                        ↷ Redo
+                    </button>
+                    <button id="resetBtn" class="btn btn-danger">
+                        ✕ Reset
+                    </button>
+                </div>
+
+                <!-- Validation -->
+                <div id="validation" class="validation-message"></div>
+            </div>
+
+            <!-- Draft Management -->
+            <div class="card">
+                <h2>Draft Management</h2>
+                
+                <div class="draft-save">
+                    <input type="text" id="draftName" placeholder="Draft name" class="draft-input">
+                    <button id="saveDraftBtn" class="btn btn-primary">💾 Save Draft</button>
+                </div>
+
+                <div class="draft-list" id="draftList">
+                    <p class="empty-state">No drafts saved yet</p>
+                </div>
+
+                <div class="draft-stats" id="draftStats"></div>
+            </div>
+
+            <!-- History Stats -->
+            <div class="card">
+                <h2>History Statistics</h2>
+                <div class="stats-grid" id="historyStats"></div>
+            </div>
+
+            <!-- Current Transaction Preview -->
+            <div class="card">
+                <h2>Current Transaction</h2>
+                <pre id="transactionPreview" class="code-preview">{}</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="TransactionHistory.js"></script>
+    <script src="DraftManager.js"></script>
+    <script src="TransactionBuilder.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

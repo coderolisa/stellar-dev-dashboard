@@ -1,0 +1,40 @@
+{
+  "name": "transaction-builder",
+  "version": "1.0.0",
+  "description": "Transaction history management system with undo/redo and draft persistence",
+  "main": "TransactionBuilder.js",
+  "scripts": {
+    "start": "python3 -m http.server 8000 || python -m http.server 8000",
+    "test": "open test.html"
+  },
+  "keywords": [
+    "transaction",
+    "undo",
+    "redo",
+    "history",
+    "draft",
+    "localStorage",
+    "state-management"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/transaction-builder.git"
+  },
+  "files": [
+    "TransactionHistory.js",
+    "DraftManager.js",
+    "TransactionBuilder.js",
+    "app.js",
+    "index.html",
+    "test.html",
+    "test.js",
+    "styles.css",
+    "example.js",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

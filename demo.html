@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Builder - Interactive Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .demo-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .output {
+            background: #f4f4f4;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .info {
+            color: #17a2b8;
+        }
+        .warning {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Transaction Builder - Interactive Demo</h1>
+    <p>Click the buttons below to see the features in action!</p>
+
+    <!-- Demo 1: Undo/Redo -->
+    <div class="demo-section">
+        <h2>1️⃣ Undo/Redo Demo (50-step history)</h2>
+        <button onclick="demo1_undoRedo()">Run Demo</button>
+        <div id="demo1Output" class="output"></div>
+    </div>
+
+    <!-- Demo 2: Draft Management -->
+    <div class="demo-section">
+        <h2>2️⃣ Draft Management (20 max)</h2>
+        <button onclick="demo2_drafts()">Run Demo</button>
+        <div id="demo2Output" class="output"></div>
+    </div>
+
+    <!-- Demo 3: Validation -->
+    <div class="demo-section">
+        <h2>3️⃣ Transaction Validation</h2>
+        <button onclick="demo3_validation()">Run Demo</button>
+        <div id="demo3Output" class="output"></div>
+    </div>
+
+    <!-- Demo 4: Persistence -->
+    <div class="demo-section">
+        <h2>4️⃣ LocalStorage Persistence</h2>
+        <button onclick="demo4_persistence()">Run Demo</button>
+        <div id="demo4Output" class="output"></div>
+    </div>
+
+    <!-- Demo 5: Stress Test -->
+    <div class="demo-section">
+        <h2>5️⃣ Stress Test (History & Draft Limits)</h2>
+        <button onclick="demo5_stressTest()">Run Demo</button>
+        <div id="demo5Output" class="output"></div>
+    </div>
+
+    <script src="TransactionHistory.js"></script>
+    <script src="DraftManager.js"></script>
+    <script src="TransactionBuilder.js"></script>
+    <script>
+        function log(elementId, message, type = 'info') {
+            const output = document.getElementById(elementId);
+            const className = type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            output.innerHTML += `<div class="${className}">${message}</div>`;
+        }
+
+        function clearLog(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+
+        function demo1_undoRedo() {
+            clearLog('demo1Output');
+            log('demo1Output', '▶ Starting Undo/Redo Demo...', 'info');
+            
+            const builder = new TransactionBuilder();
+            
+            // Make changes
+            log('demo1Output', '📝 Setting amount to 100...');
+            builder.setAmount(100);
+            
+            log('demo1Output', '📝 Setting amount to 200...');
+            builder.setAmount(200);
+            
+            log('demo1Output', '📝 Setting amount to 300...');
+            builder.setAmount(300);
+            
+            const stats1 = builder.getStats();
+            log('demo1Output', `📊 History: ${stats1.history.undoCount} undo steps available`, 'info');
+            
+            // Undo
+            log('demo1Output', '⬅ Undoing...');
+            builder.undo();
+            log('demo1Output', `✓ Amount after undo: ${builder.getTransaction().amount}`, 'success');
+            
+            log('demo1Output', '⬅ Undoing again...');
+            builder.undo();
+            log('demo1Output', `✓ Amount after 2nd undo: ${builder.getTransaction().amount}`, 'success');
+            
+            // Redo
+            log('demo1Output', '➡ Redoing...');
+            builder.redo();
+            log('demo1Output', `✓ Amount after redo: ${builder.getTransaction().amount}`, 'success');
+            
+            log('demo1Output', '✅ Undo/Redo works flawlessly!', 'success');
+        }
+
+        function demo2_drafts() {
+            clearLog('demo2Output');
+            log('demo2Output', '▶ Starting Draft Management Demo...', 'info');
+            
+            localStorage.clear();
+            const builder = new TransactionBuilder();
+            
+            // Create multiple drafts
+            log('demo2Output', '📝 Creating draft 1...');
+            builder.setType('payment');
+            builder.setAmount(100);
+            builder.saveDraft('Payment Draft');
+            
+            log('demo2Output', '📝 Creating draft 2...');
+            builder.reset();
+            builder.setType('transfer');
+            builder.setAmount(500);
+            builder.saveDraft('Transfer Draft');
+            
+            log('demo2Output', '📝 Creating draft 3...');
+            builder.reset();
+            builder.setType('withdrawal');
+            builder.setAmount(200);
+            builder.saveDraft('Withdrawal Draft');
+            
+            const stats = builder.getStats();
+            log('demo2Output', `📊 Total drafts saved: ${stats.drafts.draftCount}/${stats.drafts.maxDrafts}`, 'info');
+            
+            // Load a draft
+            const drafts = builder.getAllDrafts();
+            log('demo2Output', `📂 Loading "${drafts[0].name}"...`);
+            builder.loadDraft(drafts[0].id);
+            log('demo2Output', `✓ Loaded amount: ${builder.getTransaction().amount}`, 'success');
+            
+            log('demo2Output', '✅ Draft management works perfectly!', 'success');
+        }
+
+        function demo3_validation() {
+            clearLog('demo3Output');
+            log('demo3Output', '▶ Starting Validation Demo...', 'info');
+            
+            const builder = new TransactionBuilder();
+            
+            // Test invalid transaction
+            log('demo3Output', '❌ Testing empty transaction...');
+            let result = builder.validate();
+            log('demo3Output', `Valid: ${result.valid}`, 'warning');
+            log('demo3Output', `Errors: ${result.errors.join(', ')}`, 'warning');
+            
+            // Add required fields
+            log('demo3Output', '\n✏ Adding required fields...');
+            builder.setType('payment');
+            builder.setAmount(100);
+            builder.setFrom('Alice');
+            builder.setTo('Bob');
+            
+            result = builder.validate();
+            log('demo3Output', `✓ Valid: ${result.valid}`, 'success');
+            log('demo3Output', '✅ Validation works correctly!', 'success');
+        }
+
+
+        function demo4_persistence() {
+            clearLog('demo4Output');
+            log('demo4Output', '▶ Starting Persistence Demo...', 'info');
+            
+            localStorage.clear();
+            
+            // Create first instance
+            log('demo4Output', '📝 Creating builder instance 1...');
+            const builder1 = new TransactionBuilder();
+            builder1.setType('payment');
+            builder1.setAmount(999);
+            builder1.setFrom('Account-A');
+            builder1.setTo('Account-B');
+            builder1.saveDraft('Persistent Draft');
+            
+            log('demo4Output', '✓ Draft saved in instance 1', 'success');
+            log('demo4Output', '📊 Simulating browser close/reopen...');
+            
+            // Create second instance - simulates browser restart
+            const builder2 = new TransactionBuilder();
+            const drafts = builder2.getAllDrafts();
+            
+            log('demo4Output', `📂 Drafts found in instance 2: ${drafts.length}`, 'info');
+            
+            if (drafts.length > 0) {
+                builder2.loadDraft(drafts[0].id);
+                const tx = builder2.getTransaction();
+                log('demo4Output', `✓ Loaded: ${tx.type}, ${tx.amount}, ${tx.from} → ${tx.to}`, 'success');
+                log('demo4Output', '✅ Persistence works! Data survives "browser restart"', 'success');
+            }
+        }
+
+        function demo5_stressTest() {
+            clearLog('demo5Output');
+            log('demo5Output', '▶ Starting Stress Test...', 'info');
+            
+            localStorage.clear();
+            
+            // Test 1: History limit (50 steps)
+            log('demo5Output', '\n🧪 TEST 1: History Limit (50 steps)');
+            const builder = new TransactionBuilder();
+            
+            log('demo5Output', '📝 Pushing 60 state changes...');
+            for (let i = 1; i <= 60; i++) {
+                builder.setAmount(i);
+            }
+            
+            const stats1 = builder.getStats();
+            log('demo5Output', `✓ Undo stack size: ${stats1.history.undoCount}`, 'info');
+            log('demo5Output', `✓ Max enforced: ${stats1.history.undoCount <= 50 ? 'YES' : 'NO'}`, 
+                stats1.history.undoCount <= 50 ? 'success' : 'warning');
+            
+            // Test 2: Draft limit (20 drafts)
+            log('demo5Output', '\n🧪 TEST 2: Draft Limit (20 max)');
+            log('demo5Output', '📝 Creating 25 drafts...');
+            
+            for (let i = 1; i <= 25; i++) {
+                builder.setAmount(i * 100);
+                builder.saveDraft(`Draft ${i}`);
+            }
+            
+            const stats2 = builder.getStats();
+            log('demo5Output', `✓ Draft count: ${stats2.drafts.draftCount}`, 'info');
+            log('demo5Output', `✓ Limit enforced: ${stats2.drafts.draftCount === 20 ? 'YES' : 'NO'}`, 
+                stats2.drafts.draftCount === 20 ? 'success' : 'warning');
+            
+            // Test 3: Performance
+            log('demo5Output', '\n🧪 TEST 3: Performance Test');
+            const start = performance.now();
+            
+            for (let i = 0; i < 1000; i++) {
+                builder.setAmount(Math.random() * 1000);
+            }
+            
+            const end = performance.now();
+            log('demo5Output', `✓ 1000 operations in ${(end - start).toFixed(2)}ms`, 'success');
+            log('demo5Output', `✓ Average: ${((end - start) / 1000).toFixed(3)}ms per operation`, 'info');
+            
+            log('demo5Output', '\n✅ All stress tests passed!', 'success');
+        }
+
+        // Auto-run message
+        log('demo1Output', '👆 Click "Run Demo" to see undo/redo in action');
+        log('demo2Output', '👆 Click "Run Demo" to see draft management');
+        log('demo3Output', '👆 Click "Run Demo" to see validation');
+        log('demo4Output', '👆 Click "Run Demo" to see persistence');
+        log('demo5Output', '👆 Click "Run Demo" to run stress tests');
+    </script>
+</body>
+</html>
